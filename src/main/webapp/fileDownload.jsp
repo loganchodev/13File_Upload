@@ -1,6 +1,6 @@
-<%@ page import="java.io.File" %> <!-- java.io.File 클래스를 임포트하여 파일 관련 작업 수행 -->
+<%@ page import="java.io.File" %> 
 <%@ page language="java" contentType="text/html; charset=UTF-8"
-    pageEncoding="UTF-8"%> <!-- 페이지의 언어, 컨텐트 타입, 문자 인코딩 설정 -->
+    pageEncoding="UTF-8"%> 
 <!DOCTYPE html>
 <html>
 <head>
