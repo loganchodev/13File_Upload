@@ -1,6 +1,9 @@
-<%@ page import="java.io.File" %> 
+<%@page import="java.net.URLEncoder"%>
+<%@ page import="file.FileDTO" %>
+<%@ page import="file.FileDAO" %>
+<%@ page import="java.util.ArrayList" %>
 <%@ page language="java" contentType="text/html; charset=UTF-8"
-    pageEncoding="UTF-8"%> 
+    pageEncoding="UTF-8"%>
 <!DOCTYPE html>
 <html>
 <head>
@@ -9,16 +12,13 @@
 </head>
 <body>
 <%
-	String directory = application.getRealPath("/upload/"); // 서버의 '/upload/' 디렉토리의 실제 경로를 가져옴
-	String files[] = new File(directory).list(); // 해당 디렉토리 내의 모든 파일 이름을 String 배열로 가져옴
+	ArrayList<FileDTO> fileList = new FileDAO().getList();
 	
-	for(String file : files){ // 배열에 있는 모든 파일 이름에 대해 반복
+	for(FileDTO file : fileList){
 		out.write("<a href=\"" + request.getContextPath() + "/downloadAction?file=" +
-			java.net.URLEncoder.encode(file, "UTF-8") + "\">" + file + "</a><br>"); 
-			// 각 파일 이름에 대한 링크 생성 및 출력. 링크는 'downloadAction' 서블릿 또는 페이지를 통해 파일 다운로드를 처리하도록 설정됨.
-			// 파일 이름은 URL 인코딩을 사용하여 웹 안전한 문자열로 변환됨.
+			URLEncoder.encode(file.getFileRealName(), "UTF-8") + "\">" +
+				file.getFileName() + "(다운로드 횟수: " + file.getDownloadCount() + ")</a><br>");
 	}
-	
 %>
 </body>
 </html>

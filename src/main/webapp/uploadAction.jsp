@@ -1,9 +1,10 @@
-<%@ page import="file.FileDAO" %> <!-- FileDAO 클래스를 임포트하여 사용 -->
-<%@ page import="java.io.File" %> <!-- 파일 관련 작업을 위한 자바 기본 클래스 임포트 -->
-<%@ page import="com.oreilly.servlet.multipart.DefaultFileRenamePolicy" %> <!-- 중복된 파일 이름 처리를 위한 정책 클래스 임포트 -->
-<%@ page import="com.oreilly.servlet.MultipartRequest" %> <!-- 멀티파트 요청을 처리하기 위한 클래스 임포트 -->
+<%@page import="com.oreilly.servlet.multipart.DefaultFileRenamePolicy"%>
+<%@page import="com.oreilly.servlet.MultipartRequest"%>
 <%@ page language="java" contentType="text/html; charset=UTF-8"
-    pageEncoding="UTF-8"%> <!-- 페이지 언어, 컨텐트 타입, 인코딩 설정 -->
+	pageEncoding="UTF-8"%>
+<%@ page import="java.io.File"%>
+<%@ page import="file.FileDAO"%>
+
 <!DOCTYPE html>
 <html>
 <head>
@@ -12,21 +13,35 @@
 </head>
 <body>
     <% 
-        String directory = application.getRealPath("/upload/"); // 업로드할 디렉토리 경로
-        int maxSize = 1024 * 1024 * 100; // 업로드할 파일의 최대 크기를 100MB로 제한
-        String encoding = "UTF-8"; // 파일 인코딩 방식 지정
+        // 업로드할 파일이 저장될 서버 상의 디렉토리 경로를 설정합니다.
+        String directory = "C:/kjw_data/upload";
+        // 업로드 파일 크기의 최대값을 100MB로 설정합니다.
+        int maxSize = 1024 * 1024 * 100;
+        // 파일의 인코딩 설정을 UTF-8로 지정합니다.
+        String encoding = "UTF-8";
         
-        MultipartRequest multipartRequest 
-        = new MultipartRequest(request, directory, maxSize, encoding, 
-            new DefaultFileRenamePolicy()); // MultipartRequest 객체 생성하여 파일 업로드 처리
+        // MultipartRequest 객체를 생성하여 파일 업로드 요청을 처리합니다.
+        // 이때, DefaultFileRenamePolicy를 사용하여 파일명 중복을 처리합니다.
+        MultipartRequest multipartRequest = new MultipartRequest(request, directory, maxSize, encoding, new DefaultFileRenamePolicy());
         
-        String fileName = multipartRequest.getOriginalFileName("file"); // 업로드된 파일의 원본 이름 가져오기
-        String fileRealName = multipartRequest.getFilesystemName("file"); // 서버에 저장된 실제 파일 이름 가져오기
+        // 업로드된 파일의 원본 이름과 실제 서버에 저장된 파일 이름을 가져옵니다.
+        String fileName = multipartRequest.getOriginalFileName("file");
+        String fileRealName = multipartRequest.getFilesystemName("file");
         
-        new FileDAO().upload(fileName, fileRealName); // FileDAO의 upload 메서드를 사용하여 파일 정보 데이터베이스에 저장
-        
-        out.write("파일명: " + fileName + "<br>"); // 업로드된 파일의 원본 이름을 화면에 출력
-        out.write("실제파일명: " + fileRealName + "<br>"); // 서버에 저장된 실제 파일 이름을 화면에 출력
+        // 특정 확장자(.gif, .png, .jpg, .txt)만 업로드를 허용합니다.
+        if(!fileName.endsWith(".gif") && !fileName.endsWith(".png") && !fileName.endsWith(".jpg") && !fileName.endsWith(".txt")){
+            // 허용되지 않는 확장자의 파일은 삭제합니다.
+            File file = new File(directory + "/" + fileRealName);
+            file.delete();
+            // 사용자에게 확장자가 허용되지 않음을 알립니다.
+            out.write("업로드 할 수 없는 확장자 입니다.");
+        } else {
+            // 허용된 확장자의 파일인 경우, 파일 정보를 데이터베이스에 저장합니다.
+            new FileDAO().upload(fileName, fileRealName);
+            // 업로드된 파일의 정보를 사용자에게 표시합니다.
+            out.write("파일명: " + fileName + "<br>");
+            out.write("실제파일명: " + fileRealName + "<br>");
+        }
     %>
 </body>
 </html>

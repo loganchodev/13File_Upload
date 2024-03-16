@@ -4,7 +4,21 @@ public class FileDTO {
 
 	String fileName;
 	String fileRealName;
+	int downloadCount;
 	
+	public FileDTO(String fileName, String fileRealName, int downloadCount) {
+		super();
+		this.fileName = fileName;
+		this.fileRealName = fileRealName;
+		this.downloadCount = downloadCount;
+	}
+	
+	public int getDownloadCount() {
+		return downloadCount;
+	}
+	public void setDownloadCount(int downloadCount) {
+		this.downloadCount = downloadCount;
+	}
 	public String getFileName() {
 		return fileName;
 	}
